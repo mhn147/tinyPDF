@@ -13,7 +13,9 @@ var file = null;
 
 realFileBtn.change(function() {
     reset();
-    if (realFileBtn.val()) {                
+    if (realFileBtn.val()) { 
+        $('.progress-status-container').hide();
+        
         // extracts the filename, in MB
         var filesize = (this.files[0].size / 1048576).toFixed(3);
         
@@ -36,68 +38,17 @@ realFileBtn.change(function() {
 
         var formData = new FormData();
         formData.append('file', file);
-        /*$.ajax({
-            xhr: function() {
-                set_progress_state('Uploading and compressing...');
-                progressBar.show();
-                var xhr = new window.XMLHttpRequest();
-                xhr.responseType = 'json';
-                xhr.upload.addEventListener('progress', function(e) {
-                    var loaded = e.loaded;
-                    var total = e.total;
-
-                    var percentage_complete = Math.floor((loaded / total) * 100);
-                    set_progress_percentage(percentage_complete);
-                }, false);
-                return xhr;
-            },
-            type: 'POST',
-            url: '/compressedfiles',
-            data: formData,
-            contentType: false,
-            dataType: 'json',
-            cache: false,
-            processData: false,
-            beforeSend: function() {
-                customBtn.prop('disabled', true);
-            },
-            dataFilter: function(jsonString) {
-                return JSON.stringify(jsonString);
-            },
-            success: function() {
-                $.ajax({
-                    type: 'POST',
-                    url: '/compress',
-                    responseType: 'blob',
-                    beforeSend: function() {
-                        set_progress_state('Compressing...');
-                    },
-                    success: function() {
-                        var filesize = getCookie('filesize');
-                        responseText.show();
-                        // response-text: New size: 80 KB -32%
-                        responseText.html('New size: ' + filesize + ' MB -' + 
-                            calculateDiffPercentage(originalFileSize, filesize) + '%')
-                        downloadBtn.prop('download', new Date().getTime() + filename)
-                        downloadBtn.show();
-                        customBtn.prop('disabled', false);
-                        set_progress_state('Finished');
-                    }
-                })
-            }
-        })*/
         $.ajax({
             xhr: function() {
-                set_progress_state('Uploading and compressing...');
+                $('.progress-status-container').show();
+                setProgressStatus('Uploading and compressing...');
                 progressBar.show();
                 var xhr = new window.XMLHttpRequest();
                 xhr.responseType = 'json';
                 xhr.upload.addEventListener('progress', function(e) {
                     var loaded = e.loaded;
                     var total = e.total;
-
-                    var percentage_complete = Math.floor((loaded / total) * 100);
-                    set_progress_percentage(percentage_complete);
+                    NProgress.set(loaded / total);
                 }, false);
                 return xhr;
             },
@@ -124,7 +75,7 @@ realFileBtn.change(function() {
                 downloadBtn.prop('download', new Date().getTime() + filename);
                 downloadBtn.show();
                 customBtn.prop('disabled', false);
-                set_progress_state('Finished');
+                setProgressStatus('Finished');
             }
         })
     } else {
@@ -142,9 +93,8 @@ function set_progress_percentage(percent) {
 }
 
 
-function set_progress_state(state) {
-    var progressBar = document.getElementsByClassName('progress-bar')[0];
-    progressBar.setAttribute('data-label', state);
+function setProgressStatus(state) {
+    $('#progress-status').text(state);
 }
 
 
@@ -189,3 +139,7 @@ function truncate(filename, num_char) {
         return filename.substring(0, num_char + 1) + '---.' + extension;
     }
 }
+
+$(document).ready(function(){
+    // NProgress.set(0.4);
+})
