@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Straight forward tool to compress PDF files">
+    <meta name="keywords" content="PDF,compressor,online,minimizer,free">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css')}}">
+    <title>TinyPDF -- A straight forward tool to compress large PDF files</title>
+</head>
+<body>
+    <div class="background"></div>
+    <div class="container">
+        <main>
+            <section class="info">
+                <header>
+                    <h1 class="brand">
+                        TinyPDF
+                    </h1>
+                    <p>
+                        Getting tired of unnecessarily large PDF files? <br>
+                        TinyPDF is an online free pdf compressor.
+                    </p>
+                </header>
+                <article class="cool-pic">
+                    <img src="{{ url_for('static', filename='img/undraw_file_analysis.svg')}}" alt="">
+                </article>
+            </section>
+            <section class="upload">
+                <form action="/" method="POST" enctype="multipart/form-data">
+                    <input type="file" accept="application/pdf" class="input-file-btn" hidden="hidden">
+                    <input type="submit" value="Upload" class="submit-btn">
+                    <div class="feedback">
+                        <span class="custom-text">No file chosen, yet.</span>
+                        <span class="error-text">File size must be less then 10 MB</span>
+                        <span class="file-size"></span>
+                    </div>
+                </form>
+                
+                <div class="progress-bar" data-label="Uploading..." 
+                    style="--width: 0; display: none;" data-percentage="0%">
+                </div>
+
+                <div class="response">
+                    <span class="response-text" style="display: none;"></span>
+                    <a href="/get" class="download-btn" style="display: none;">Download</a>
+                </div>
+            </section>
+        </main>
+    </div>
+
+
+    <script src="{{ url_for('static', filename='js/jquery-3.5.0.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
