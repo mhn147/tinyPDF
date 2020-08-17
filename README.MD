@@ -1,4 +1,4 @@
-# TinyPDF, a lovely Panda that can mysteriously compress your PDF file.
+# TinyPDF is a lovely Panda that can mysteriously compress your PDF file.
 
 
 A Simple jQuery and Flask application that uses GhostScript under the hood to compress PDF files.
