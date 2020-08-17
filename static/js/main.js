@@ -36,9 +36,9 @@ realFileBtn.change(function() {
 
         var formData = new FormData();
         formData.append('file', file);
-        $.ajax({
+        /*$.ajax({
             xhr: function() {
-                set_progress_state('Uploading...');
+                set_progress_state('Uploading and compressing...');
                 progressBar.show();
                 var xhr = new window.XMLHttpRequest();
                 xhr.responseType = 'json';
@@ -52,7 +52,7 @@ realFileBtn.change(function() {
                 return xhr;
             },
             type: 'POST',
-            url: '/',
+            url: '/compressedfiles',
             data: formData,
             contentType: false,
             dataType: 'json',
@@ -84,6 +84,47 @@ realFileBtn.change(function() {
                         set_progress_state('Finished');
                     }
                 })
+            }
+        })*/
+        $.ajax({
+            xhr: function() {
+                set_progress_state('Uploading and compressing...');
+                progressBar.show();
+                var xhr = new window.XMLHttpRequest();
+                xhr.responseType = 'json';
+                xhr.upload.addEventListener('progress', function(e) {
+                    var loaded = e.loaded;
+                    var total = e.total;
+
+                    var percentage_complete = Math.floor((loaded / total) * 100);
+                    set_progress_percentage(percentage_complete);
+                }, false);
+                return xhr;
+            },
+            type: 'POST',
+            url: '/compressedfiles',
+            data: formData,
+            contentType: false,
+            dataType: 'json',
+            cache: false,
+            processData: false,
+            responseType: 'blob',
+            beforeSend: function() {
+                customBtn.prop('disabled', true);
+            },
+            dataFilter: function(jsonString) {
+                return JSON.stringify(jsonString);
+            },
+            success: function() {
+                var filesize = getCookie('filesize');
+                responseText.show();
+                // response-text: New size: 80 KB -32%
+                responseText.html('New size: ' + filesize + ' MB -' + 
+                    calculateDiffPercentage(originalFileSize, filesize) + '%');
+                downloadBtn.prop('download', new Date().getTime() + filename);
+                downloadBtn.show();
+                customBtn.prop('disabled', false);
+                set_progress_state('Finished');
             }
         })
     } else {
