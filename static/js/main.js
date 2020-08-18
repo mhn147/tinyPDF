@@ -3,18 +3,26 @@ var customBtn = $('.submit-btn');
 var customText = $('.custom-text');
 var fileSizeText = $('.file-size');
 var errorText = $('.error-text');
-var progressBar = $('.progress-bar');
 var responseText = $('.response-text');
 var downloadBtn = $('.download-btn');
+var downloadNotice = $('.download-notice');
 var originalFileSize = 0;
 var filename = '';
 var file = null;
 
 
+
+$(document).ready(function(){
+    customBtn.click(function() {
+        realFileBtn.click();
+    });
+})
+
+
 realFileBtn.change(function() {
     reset();
     if (realFileBtn.val()) { 
-        $('.progress-status-container').hide();
+       
         
         // extracts the filename, in MB
         var filesize = (this.files[0].size / 1048576).toFixed(3);
@@ -30,7 +38,7 @@ realFileBtn.change(function() {
         file = this.files[0];
         originalFileSize = filesize;
         filename = $('input[type=file]').val().split('\\').pop();
-        customText.html(truncate(filename, 15));
+        customText.html(truncateFileName(filename, 15));
         fileSizeText.html('Original size: ' + originalFileSize + ' MB');
         fileSizeText.show();
         customText.show();
@@ -41,13 +49,15 @@ realFileBtn.change(function() {
         $.ajax({
             xhr: function() {
                 $('.progress-status-container').show();
-                setProgressStatus('Uploading and compressing...');
-                progressBar.show();
+                setProgressStatus('Uploading...');
                 var xhr = new window.XMLHttpRequest();
                 xhr.responseType = 'json';
                 xhr.upload.addEventListener('progress', function(e) {
                     var loaded = e.loaded;
                     var total = e.total;
+                    if (loaded / total == 1) {
+                        setProgressStatus('Compressing...');
+                    }
                     NProgress.set(loaded / total);
                 }, false);
                 return xhr;
@@ -69,11 +79,11 @@ realFileBtn.change(function() {
             success: function() {
                 var filesize = getCookie('filesize');
                 responseText.show();
-                // response-text: New size: 80 KB -32%
-                responseText.html('New size: ' + filesize + ' MB -' + 
+                responseText.html('New size: ' + filesize + ' MB - ' + 
                     calculateDiffPercentage(originalFileSize, filesize) + '%');
                 downloadBtn.prop('download', new Date().getTime() + filename);
-                downloadBtn.show();
+                downloadBtn.fadeIn(1500);
+                downloadNotice.fadeIn(2000);
                 customBtn.prop('disabled', false);
                 setProgressStatus('Finished');
             }
@@ -83,20 +93,13 @@ realFileBtn.change(function() {
     }
 });
 
-
-function set_progress_percentage(percent) {
-    var progressBar = document.getElementsByClassName('progress-bar')[0];
-    var computedStyle = getComputedStyle(progressBar);
-    var width = parseFloat(computedStyle.getPropertyValue('--width')) || 0;
-    progressBar.style.setProperty('--width', percent);
-    progressBar.setAttribute('data-percentage', percent + '%');
-}
-
+$('form').submit(function(e) {
+    e.preventDefault();
+});
 
 function setProgressStatus(state) {
     $('#progress-status').text(state);
 }
-
 
 // https://stackoverflow.com/questions/10730362/get-cookie-by-name
 function getCookie(name) {
@@ -106,10 +109,6 @@ function getCookie(name) {
 }
 
 
-$('form').submit(function(e) {
-    e.preventDefault();
-});
-
 
 function calculateDiffPercentage(originalFileSize, filesize) {
     var diff = originalFileSize - filesize;
@@ -117,29 +116,21 @@ function calculateDiffPercentage(originalFileSize, filesize) {
     return ((diff / originalFileSize) * 100).toFixed(2);
 }
 
-
-customBtn.click(function() {
-    realFileBtn.click();
-});
+function truncateFileName(filename, num_char) {
+    if (filename.length > num_char) {
+        var parts = filename.split('.');
+        filename = parts[0];
+        extension = parts[1];
+        return filename.substring(0, num_char + 1) + '.' + extension;
+    }
+}
 
 function reset() {
-    progressBar.hide();
+    $('.progress-status-container').hide();
+    downloadNotice.hide();
     customText.hide();
     fileSizeText.hide();
     errorText.hide();
     responseText.hide();
     downloadBtn.hide();
 }
-
-function truncate(filename, num_char) {
-    if (filename.length > num_char) {
-        var parts = filename.split('.');
-        filename = parts[0];
-        extension = parts[1];
-        return filename.substring(0, num_char + 1) + '---.' + extension;
-    }
-}
-
-$(document).ready(function(){
-    // NProgress.set(0.4);
-})

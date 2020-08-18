@@ -13,42 +13,6 @@
 </head>
 <body>
      <div class="background"></div>
-    <!-- <main class="container">
-        <section class="info">
-            <header>
-                <h1 class="brand">
-                    TinyPDF
-                </h1>
-                <p>
-                    Getting tired of unnecessarily large PDF files? <br>
-                    TinyPDF is an online free pdf compressor.
-                </p>
-            </header>
-            <article class="cool-pic">
-                <img src="{{ url_for('static', filename='img/undraw_file_analysis.svg')}}" alt="">
-            </article>
-        </section>
-        <section class="upload">
-            <form action="/" method="POST" enctype="multipart/form-data">
-                <input type="file" accept="application/pdf" class="input-file-btn" hidden="hidden">
-                <input type="submit" value="Upload" class="submit-btn">
-                <div class="feedback">
-                    <span class="custom-text">No file chosen, yet.</span>
-                    <span class="error-text">File size must be less then 10 MB</span>
-                    <span class="file-size"></span>
-                </div>
-            </form>
-            
-            <div class="progress-bar" data-label="Uploading..." 
-                style="--width: 0; display: none;" data-percentage="0%">
-            </div>
-
-            <div class="response">
-                <span class="response-text" style="display: none;"></span>
-                <a href="/get" class="download-btn" style="display: none;">Download</a>
-            </div>
-        </section>        
-    </main> -->
 
     <main class="container">
         <div class="row">
@@ -71,14 +35,11 @@
                 </div>
             </div>
             <div class="col-12 col-lg-6 d-flex flex-column justify-content-center">
-                <!-- <div class="feedback">
-                    <span class="error-text">File size must be less then 10 MB</span>
-                    <span class="file-size"></span>
-                </div> -->
-                <span class="error-text text-feedback">File size must be less then 10 MB</span>
+                <span class="error-text text-feedback">File size must be less then 20 MB !</span>
                 <span class="file-size text-feedback"></span>
-                <span class="response-text text-feedback" style="display: none;"></span>
+                <span class="response-text text-feedback"></span>
                 <a href="/get" class="download-btn text-feedback" style="display: none;">Download</a>
+                <span class="text-feedback download-notice">(You can use the download button only once!)</span>
             </div>
         </div>
     </main>
