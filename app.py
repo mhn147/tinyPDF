@@ -48,7 +48,7 @@ def get():
     res = make_response(outPdf)
     res.headers['Content-Type'] = 'application/pdf'
     res.headers['Content-Disposition'] = \
-        'inline; filename=%s.pdf' % request.cookies.get('filename')
+        'inline; filename=%s' % request.cookies.get('filename')
 
     # clearing up
     os.remove(request.cookies.get('filename'))

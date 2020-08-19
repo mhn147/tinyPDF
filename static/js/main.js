@@ -7,7 +7,6 @@ var responseText = $('.response-text');
 var downloadBtn = $('.download-btn');
 var downloadNotice = $('.download-notice');
 var originalFileSize = 0;
-var filename = '';
 var file = null;
 
 
@@ -37,8 +36,6 @@ realFileBtn.change(function() {
 
         file = this.files[0];
         originalFileSize = filesize;
-        filename = $('input[type=file]').val().split('\\').pop();
-        customText.html(truncateFileName(filename, 15));
         fileSizeText.html('Original size: ' + originalFileSize + ' MB');
         fileSizeText.show();
         customText.show();
@@ -78,9 +75,10 @@ realFileBtn.change(function() {
             },
             success: function() {
                 var filesize = getCookie('filesize');
+                var filename = getCookie('filename');
                 responseText.show();
-                responseText.html('New size: ' + filesize + ' MB - ' + 
-                    calculateDiffPercentage(originalFileSize, filesize) + '%');
+                responseText.html('New size: ' + filesize + ' MB ' + 
+                    calculateDiffPercentage(originalFileSize, filesize));
                 downloadBtn.prop('download', new Date().getTime() + filename);
                 downloadBtn.fadeIn(1500);
                 downloadNotice.fadeIn(2000);
@@ -111,18 +109,12 @@ function getCookie(name) {
 
 
 function calculateDiffPercentage(originalFileSize, filesize) {
-    var diff = originalFileSize - filesize;
+    if (originalFileSize > filesize) {
+        var diff = originalFileSize - filesize;
 
-    return ((diff / originalFileSize) * 100).toFixed(2);
-}
-
-function truncateFileName(filename, num_char) {
-    if (filename.length > num_char) {
-        var parts = filename.split('.');
-        filename = parts[0];
-        extension = parts[1];
-        return filename.substring(0, num_char + 1) + '.' + extension;
+        return '-' + ((diff / originalFileSize) * 100).toFixed(2) + '%';
     }
+    return '';
 }
 
 function reset() {
